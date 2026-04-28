@@ -1,0 +1,51 @@
+{
+  "research_topics": [
+    {
+      "title": "Temporal dynamics of population codes in prefrontal cortex during working memory",
+      "notes": "Focus on spiking neural network models and comparison with LFP data from OpenNeuro"
+    },
+    {
+      "title": "Neural manifold geometry in hippocampal place cells across sleep-wake cycles",
+      "notes": "Use dimensionality reduction techniques, compare wake vs REM vs NREM manifolds"
+    },
+    {
+      "title": "Predictive coding in visual cortex: a comparison of hierarchical Bayesian and SNN approaches",
+      "notes": "Leverage Allen Brain Observatory datasets, focus on V1 responses to natural images"
+    }
+  ],
+  "available_resources": {
+    "gpu": "NVIDIA A100 80GB",
+    "ram_gb": 256,
+    "storage_tb": 2,
+    "compute_budget_hours": 200,
+    "team_size": 1
+  },
+  "target_journals": [
+    "PLOS Computational Biology",
+    "eLife",
+    "Journal of Neuroscience",
+    "Neural Computation",
+    "NeurIPS"
+  ],
+  "reference_papers": [
+    "Cunningham & Yu (2014) - Dimensionality reduction for large-scale neural recordings",
+    "Vyas et al. (2020) - Computation Through Neural Population Dynamics",
+    "Saxena & Cunningham (2019) - Towards the neural population doctrine",
+    "Shenoy et al. (2013) - Cortical Control of Arm Movements",
+    "Pandarinath et al. (2018) - Inferring single-trial neural population dynamics using sequential auto-encoders"
+  ],
+  "constraints": {
+    "timeline_weeks_max": 24,
+    "must_use_open_data": true,
+    "reproducibility_required": true,
+    "preferred_framework": "PyTorch",
+    "language": "Python 3.10+"
+  },
+  "pipeline_settings": {
+    "max_revision_cycles": 2,
+    "max_agent_retries": 3,
+    "approval_threshold": 7.0,
+    "log_level": "INFO",
+    "save_intermediate": true
+  }
+}
