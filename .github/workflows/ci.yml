@@ -1,0 +1,82 @@
+name: CI — Test & Lint
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    name: Run Tests (Python ${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.10', '3.11', '3.12']
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest pytest-timeout pytest-cov
+
+      - name: Run unit tests (no real API calls)
+        env:
+          ANTHROPIC_API_KEY: sk-ant-placeholder-for-ci-no-real-calls
+        run: |
+          pytest tests/ \
+            -v \
+            --timeout=60 \
+            --cov=. \
+            --cov-report=term-missing \
+            --cov-report=xml \
+            -x
+
+      - name: Upload coverage report
+        if: matrix.python-version == '3.11'
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage.xml
+
+  lint:
+    name: Lint with flake8
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install flake8
+        run: pip install flake8
+      - name: Run flake8
+        run: |
+          flake8 . \
+            --exclude=venv,.git,outputs,__pycache__ \
+            --max-line-length=120 \
+            --ignore=E501,W503 \
+            --count --show-source --statistics
+
+  build-docker:
+    name: Build Docker image
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build Docker image
+        run: docker build -t neuro-pipeline:ci .
+      - name: Smoke test Docker image
+        run: |
+          docker run --rm \
+            -e ANTHROPIC_API_KEY=sk-ant-placeholder \
+            neuro-pipeline:ci \
+            python -c "import orchestrator; print('Import OK')"
